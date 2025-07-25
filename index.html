@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kesepakatan Kelas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #2c3e50;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.5rem;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      background: #ecf0f1;
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    ul li::before {
+      content: "✔";
+      color: #27ae60;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      background: #2c3e50;
+      color: #fff;
+    }
+
+    button {
+      background: #27ae60;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background: #219150;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Kesepakatan Kelas 7H
+  </header>
+  <main>
+    <h2>Daftar Kesepakatan</h2>
+    <ul id="kesepakatan-list">
+      <li>Datang tepat waktu sebelum pelajaran dimulai.</li>
+      <li>Menjaga kebersihan dan kerapian kelas.</li>
+      <li>Saling menghormati teman dan guru.</li>
+      <li>Tidak menggunakan ponsel saat pelajaran.</li>
+      <li>Aktif berpartisipasi dalam diskusi kelas.</li>
+    </ul>
+    <button onclick="tambahKesepakatan()">Tambah Kesepakatan</button>
+  </main>
+  <footer>
+    &copy; 2025 Kesepakatan Kelas - Dibuat oleh Kelas X IPA 1
+  </footer>
+
+  <script>
+    function tambahKesepakatan() {
+      const input = prompt("Masukkan kesepakatan baru:");
+      if (input && input.trim() !== "") {
+        const li = document.createElement("li");
+        li.textContent = input;
+        document.getElementById("kesepakatan-list").appendChild(li);
+      } else {
+        alert("Kesepakatan tidak boleh kosong.");
+      }
+    }
+  </script>
+</body>
+</html>
