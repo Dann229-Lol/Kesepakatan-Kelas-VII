@@ -65,7 +65,7 @@
     }
 
     button {
-      background: #27ae60;
+      background: #2980b9;
       color: #fff;
       border: none;
       padding: 10px 20px;
@@ -76,39 +76,35 @@
     }
 
     button:hover {
-      background: #219150;
+      background: #1f6691;
     }
   </style>
 </head>
 <body>
   <header>
-    Kesepakatan Kelas 7H
+    Kesepakatan Kelas VII H
   </header>
   <main>
     <h2>Daftar Kesepakatan</h2>
-    <ul id="kesepakatan-list">
+    <ul>
       <li>Datang tepat waktu sebelum pelajaran dimulai.</li>
       <li>Menjaga kebersihan dan kerapian kelas.</li>
       <li>Saling menghormati teman dan guru.</li>
       <li>Tidak menggunakan ponsel saat pelajaran.</li>
       <li>Aktif berpartisipasi dalam diskusi kelas.</li>
     </ul>
-    <button onclick="tambahKesepakatan()">Tambah Kesepakatan</button>
+    <button onclick="hubungiGuru()">Hubungi Guru</button>
   </main>
   <footer>
-    &copy; 2025 Kesepakatan Kelas - Dibuat oleh Rasydan Vii H
+    &copy; 2025 Kesepakatan Kelas - Dibuat oleh Rasydan VII H
   </footer>
 
   <script>
-    function tambahKesepakatan() {
-      const input = prompt("Masukkan kesepakatan baru:");
-      if (input && input.trim() !== "") {
-        const li = document.createElement("li");
-        li.textContent = input;
-        document.getElementById("kesepakatan-list").appendChild(li);
-      } else {
-        alert("Kesepakatan tidak boleh kosong.");
-      }
+    function hubungiGuru() {
+      // Ganti nomor WA guru di sini (format internasional tanpa +)
+      const nomorGuru = "6285929809036"; 
+      const pesan = "Halo Bu/Pak Guru, saya ingin bertanya tentang kesepakatan kelas.";
+      window.open(`https://wa.me/${nomorGuru}?text=${encodeURIComponent(pesan)}`, "_blank");
     }
   </script>
 </body>
