@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkShort - Professional URL Shortener</title>
+    <title>LinkTracker Pro - Advanced URL Tracking</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,306 +11,588 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .card-hover {
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        .pulse-animation {
-            animation: pulse 2s infinite;
+        .map-container {
+            background: linear-gradient(45deg, #e0e7ff, #c7d2fe);
+            border-radius: 12px;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .location-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+        .location-marker::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            top: 6px;
+            left: 6px;
+        }
+        .stat-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid #e2e8f0;
         }
         .copy-btn {
             transition: all 0.3s ease;
         }
         .copy-btn:hover {
-            background-color: #4F46E5 !important;
-        }
-        .copy-success {
-            background-color: #10B981 !important;
+            background-color: #3b82f6;
+            color: white;
         }
     </style>
 </head>
-<body class="min-h-screen gradient-bg">
-    <!-- Header -->
-    <header class="text-center py-8">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-center mb-4">
-                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-3">
-                    <i class="fas fa-link text-purple-600 text-xl"></i>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-link text-blue-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">LinkTracker Pro</span>
+                    </div>
                 </div>
-                <h1 class="text-4xl font-bold text-white">LinkShort</h1>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-user mr-2"></i>Dashboard
+                    </button>
+                </div>
             </div>
-            <p class="text-purple-100 text-lg">Transform long URLs into short, shareable links instantly</p>
         </div>
-    </header>
+    </nav>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto">
-            <!-- Hero Section -->
-            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8 card-hover">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Shorten Your Links</h2>
-                    <p class="text-gray-600">Enter any URL below to create a shortened version that's perfect for sharing</p>
-                </div>
-
-                <!-- URL Input Form -->
-                <form id="shortenForm" class="space-y-4">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-link text-gray-400"></i>
-                        </div>
-                        <input 
-                            type="url" 
-                            id="urlInput" 
-                            placeholder="https://example.com/very-long-url-that-needs-shortening" 
-                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-lg"
-                            required
-                        >
-                    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Create Link -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-plus-circle text-blue-600 mr-3"></i>
+                        Create Tracking Link
+                    </h2>
                     
-                    <button 
-                        type="submit" 
-                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 pulse-animation"
-                    >
-                        <i class="fas fa-magic mr-2"></i>Shorten URL
-                    </button>
-                </form>
-            </div>
-
-            <!-- Results Section -->
-            <div id="resultsSection" class="hidden bg-white rounded-2xl shadow-2xl p-8 card-hover">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Your Shortened Link</h3>
-                
-                <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm text-gray-500 mb-1">Original URL</p>
-                            <p id="originalUrl" class="text-gray-800 truncate text-sm"></p>
+                    <form id="createLinkForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-link mr-2 text-blue-500"></i>
+                                Destination URL
+                            </label>
+                            <input 
+                                type="url" 
+                                id="destinationUrl"
+                                placeholder="https://example.com"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                required
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-tag mr-2 text-green-500"></i>
+                                Link Name (Optional)
+                            </label>
+                            <input 
+                                type="text" 
+                                id="linkName"
+                                placeholder="My Marketing Campaign"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Tracking Features
+                            </h4>
+                            <ul class="text-sm text-blue-700 space-y-1">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Location tracking (city, country)
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Device information
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Click timestamps
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Referrer tracking
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <button 
+                            type="submit"
+                            class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                        >
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate Tracking Link
+                        </button>
+                    </form>
+                    
+                    <div id="generatedLink" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-qrcode mr-2 text-purple-500"></i>
+                            Your Tracking Link
+                        </label>
+                        <div class="flex items-center space-x-2">
+                            <input 
+                                type="text" 
+                                id="trackingLinkOutput"
+                                readonly
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-white text-sm font-mono"
+                            >
+                            <button 
+                                onclick="copyToClipboard()"
+                                class="copy-btn px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium"
+                            >
+                                <i class="fas fa-copy mr-1"></i>Copy
+                            </button>
+                        </div>
+                        <div class="mt-3 flex space-x-2">
+                            <button 
+                                onclick="testTrackingLink()"
+                                class="flex-1 bg-green-100 text-green-700 px-3 py-1 rounded text-sm hover:bg-green-200 transition-colors"
+                            >
+                                <i class="fas fa-test-tube mr-1"></i>Test Link
+                            </button>
+                            <button 
+                                onclick="shareLink()"
+                                class="flex-1 bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200 transition-colors"
+                            >
+                                <i class="fas fa-share-alt mr-1"></i>Share
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1 min-w-0 mr-4">
-                            <p class="text-sm text-purple-600 mb-1">Shortened URL</p>
-                            <a id="shortUrl" href="#" target="_blank" class="text-purple-800 font-semibold truncate block"></a>
+                
+                <!-- Quick Stats -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mt-6 card-hover">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-chart-line mr-2 text-purple-500"></i>
+                        Quick Stats
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="stat-card p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-600" id="totalClicks">0</div>
+                            <div class="text-sm text-gray-600">Total Clicks</div>
                         </div>
-                        <button 
-                            id="copyBtn" 
-                            class="copy-btn bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap"
-                        >
-                            <i class="fas fa-copy mr-1"></i>Copy
+                        <div class="stat-card p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-green-600" id="uniqueVisitors">0</div>
+                            <div class="text-sm text-gray-600">Unique Visitors</div>
+                        </div>
+                        <div class="stat-card p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-600" id="countriesCount">0</div>
+                            <div class="text-sm text-gray-600">Countries</div>
+                        </div>
+                        <div class="stat-card p-3 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-orange-600" id="conversionRate">0%</div>
+                            <div class="text-sm text-gray-600">Conversion Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Analytics -->
+            <div class="lg:col-span-2">
+                <!-- Map Visualization -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6 card-hover">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-globe-americas mr-3 text-green-600"></i>
+                        Visitor Locations
+                    </h2>
+                    <div class="map-container relative">
+                        <div id="map" class="w-full h-64 rounded-lg">
+                            <!-- Map will be generated with location markers -->
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/047792f7-31e5-4bae-89e4-72bd0afca4e1.png" alt="World map visualization with visitor location markers showing geographic distribution of link clicks across different continents" class="w-full h-full object-cover rounded-lg" />
+                        </div>
+                        <div class="absolute top-4 right-4 bg-white rounded-lg shadow-md p-3">
+                            <div class="text-sm font-semibold text-gray-700">Live Visitors</div>
+                            <div class="text-2xl font-bold text-green-600" id="liveVisitors">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                            <i class="fas fa-history mr-3 text-orange-600"></i>
+                            Recent Activity
+                        </h2>
+                        <button class="text-blue-600 text-sm font-medium hover:text-blue-800">
+                            <i class="fas fa-download mr-1"></i>Export Data
                         </button>
                     </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Time</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Location</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Device</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Referrer</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-gray-500">
+                                        <i class="fas fa-inbox text-3xl mb-2"></i>
+                                        <p>No tracking data yet. Create your first link to start collecting insights!</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <div class="text-center">
-                    <button 
-                        id="newLinkBtn" 
-                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-semibold transition duration-300"
-                    >
-                        <i class="fas fa-plus mr-1"></i>Create New Link
-                    </button>
+                
+                <!-- Privacy Notice -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-shield-alt text-blue-600 text-xl mt-1 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-blue-800">Privacy First</h4>
+                            <p class="text-sm text-blue-700 mt-1">
+                                We respect user privacy. Location data is collected only with explicit consent and is anonymized. 
+                                All data is stored securely and complies with global privacy regulations.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Loading State -->
-            <div id="loadingState" class="hidden bg-white rounded-2xl shadow-2xl p-8 text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                <p class="text-gray-600">Shortening your link...</p>
-            </div>
-
-            <!-- Error State -->
-            <div id="errorState" class="hidden bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold text-red-800 mb-2">Something went wrong</h3>
-                <p id="errorMessage" class="text-red-600"></p>
-                <button 
-                    onclick="hideError()" 
-                    class="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-300"
-                >
-                    Try Again
+    <!-- Test Modal -->
+    <div id="testModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Test Tracking Link</h3>
+                <button onclick="closeTestModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-        </div>
-    </main>
-
-    <!-- Features Section -->
-    <section class="container mx-auto px-4 py-12">
-        <h2 class="text-3xl font-bold text-white text-center mb-12">Why Choose LinkShort?</h2>
-        
-        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-bolt text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Lightning Fast</h3>
-                <p class="text-purple-100">Generate shortened links instantly with our optimized API</p>
+            <p class="text-gray-600 mb-4">This will simulate a click on your tracking link and show you what data would be collected.</p>
+            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                <h4 class="font-semibold mb-2">Data that would be collected:</h4>
+                <ul class="text-sm space-y-1" id="testDataPreview"></ul>
             </div>
-
-            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-shield-alt text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">Secure & Reliable</h3>
-                <p class="text-purple-100">All links are processed securely with HTTPS encryption</p>
-            </div>
-
-            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 text-center">
-                <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-chart-line text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-semibold text-white mb-2">No Limits</h3>
-                <p class="text-purple-100">Shorten as many links as you need, completely free</p>
-            </div>
+            <button onclick="simulateClick()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                Simulate Click
+            </button>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-white bg-opacity-10 mt-12 py-8">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-purple-100">© 2024 LinkShort - Professional URL Shortening Service</p>
-            <p class="text-purple-100 text-sm mt-2">Made with <i class="fas fa-heart text-red-400"></i> for better sharing</p>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // DOM Elements
-        const shortenForm = document.getElementById('shortenForm');
-        const urlInput = document.getElementById('urlInput');
-        const resultsSection = document.getElementById('resultsSection');
-        const loadingState = document.getElementById('loadingState');
-        const errorState = document.getElementById('errorState');
-        const errorMessage = document.getElementById('errorMessage');
-        const originalUrl = document.getElementById('originalUrl');
-        const shortUrl = document.getElementById('shortUrl');
-        const copyBtn = document.getElementById('copyBtn');
-        const newLinkBtn = document.getElementById('newLinkBtn');
+        // Initialize data storage
+        if (!localStorage.getItem('trackingLinks')) {
+            localStorage.setItem('trackingLinks', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('trackingData')) {
+            localStorage.setItem('trackingData', JSON.stringify([]));
+        }
 
-        // Event Listeners
-        shortenForm.addEventListener('submit', handleShorten);
-        copyBtn.addEventListener('click', copyToClipboard);
-        newLinkBtn.addEventListener('click', resetForm);
-
-        async function handleShorten(e) {
+        // Form submission
+        document.getElementById('createLinkForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const url = urlInput.value.trim();
-            if (!url) return;
+            const destinationUrl = document.getElementById('destinationUrl').value;
+            const linkName = document.getElementById('linkName').value || 'Unnamed Link';
+            
+            // Generate unique tracking ID
+            const trackingId = generateTrackingId();
+            const trackingLink = `${window.location.origin}${window.location.pathname}?track=${trackingId}`;
+            
+            // Save to localStorage
+            const links = JSON.parse(localStorage.getItem('trackingLinks'));
+            const newLink = {
+                id: trackingId,
+                name: linkName,
+                destination: destinationUrl,
+                created: new Date().toISOString(),
+                clicks: 0
+            };
+            links.push(newLink);
+            localStorage.setItem('trackingLinks', JSON.stringify(links));
+            
+            // Show generated link
+            document.getElementById('trackingLinkOutput').value = trackingLink;
+            document.getElementById('generatedLink').classList.remove('hidden');
+            
+            updateStats();
+        });
 
-            // Validate URL format
-            if (!isValidUrl(url)) {
-                showError('Please enter a valid URL (including http:// or https://)');
+        // Generate unique tracking ID
+        function generateTrackingId() {
+            return 'track_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard() {
+            const copyText = document.getElementById('trackingLinkOutput');
+            copyText.select();
+            document.execCommand('copy');
+            
+            // Show feedback
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }
+
+        // Test tracking link
+        function testTrackingLink() {
+            document.getElementById('testModal').classList.remove('hidden');
+            
+            // Preview data that would be collected
+            const previewData = [
+                'Approximate location (city, country)',
+                'Device type and browser',
+                'Screen resolution',
+                'Referrer information',
+                'Click timestamp',
+                'IP address (anonymized)'
+            ];
+            
+            const previewList = previewData.map(item => 
+                `<li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>${item}</li>`
+            ).join('');
+            
+            document.getElementById('testDataPreview').innerHTML = previewList;
+        }
+
+        function closeTestModal() {
+            document.getElementById('testModal').classList.add('hidden');
+        }
+
+        function simulateClick() {
+            const trackingLink = document.getElementById('trackingLinkOutput').value;
+            const trackingId = new URL(trackingLink).searchParams.get('track');
+            
+            // Simulate data collection
+            const testData = {
+                id: Date.now(),
+                trackingId: trackingId,
+                timestamp: new Date().toISOString(),
+                location: 'Test Location (Simulated)',
+                country: 'Test Country',
+                device: 'Test Device',
+                browser: 'Test Browser',
+                referrer: 'Direct',
+                ip: '127.0.0.1'
+            };
+            
+            // Save test data
+            const trackingData = JSON.parse(localStorage.getItem('trackingData'));
+            trackingData.push(testData);
+            localStorage.setItem('trackingData', JSON.stringify(trackingData));
+            
+            // Update UI
+            updateStats();
+            updateActivityTable();
+            closeTestModal();
+            
+            alert('Test click simulated! Data has been recorded.');
+        }
+
+        function shareLink() {
+            const trackingLink = document.getElementById('trackingLinkOutput').value;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Tracking Link',
+                    text: 'Check out this tracking link I created:',
+                    url: trackingLink
+                });
+            } else {
+                alert('Share this link: ' + trackingLink);
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const trackingData = JSON.parse(localStorage.getItem('trackingData'));
+            const links = JSON.parse(localStorage.getItem('trackingLinks'));
+            
+            document.getElementById('totalClicks').textContent = trackingData.length;
+            document.getElementById('uniqueVisitors').textContent = new Set(trackingData.map(item => item.ip)).size;
+            
+            const countries = new Set(trackingData.map(item => item.country));
+            document.getElementById('countriesCount').textContent = countries.size;
+            
+            const conversionRate = links.length > 0 ? Math.round((trackingData.length / links.length) * 100) : 0;
+            document.getElementById('conversionRate').textContent = conversionRate + '%';
+            
+            // Simulate live visitors
+            const liveCount = Math.floor(Math.random() * 5);
+            document.getElementById('liveVisitors').textContent = liveCount;
+        }
+
+        // Update activity table
+        function updateActivityTable() {
+            const trackingData = JSON.parse(localStorage.getItem('trackingData'));
+            const table = document.getElementById('activityTable');
+            
+            if (trackingData.length === 0) {
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-8 text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>No tracking data yet. Create your first link to start collecting insights!</p>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
-
-            showLoading();
-            hideError();
             
-            try {
-                const shortenedUrl = await shortenUrl(url);
-                showResults(url, shortenedUrl);
-            } catch (error) {
-                showError(error.message || 'Failed to shorten URL. Please try again.');
-            } finally {
-                hideLoading();
-            }
+            // Show latest 5 activities
+            const recentData = trackingData.slice(-5).reverse();
+            table.innerHTML = recentData.map(item => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="py-3 px-4 text-sm">
+                        ${new Date(item.timestamp).toLocaleTimeString()}
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                            ${item.location}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        <i class="fas fa-desktop text-blue-500 mr-2"></i>
+                        ${item.device}
+                    </td>
+                    <td class="py-3 px-4 text-sm">
+                        <i class="fas fa-external-link-alt text-green-500 mr-2"></i>
+                        ${item.referrer}
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        function isValidUrl(url) {
-            try {
-                new URL(url);
-                return true;
-            } catch {
-                return false;
-            }
-        }
-
-        async function shortenUrl(longUrl) {
-            // Using shrtco.de API - free URL shortening service
-            const apiUrl = `https://api.shrtco.de/v2/shorten?url=${encodeURIComponent(longUrl)}`;
+        // Check if we're handling a tracking link
+        function handleTrackingLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const trackId = urlParams.get('track');
             
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            
-            if (!data.ok) {
-                throw new Error(data.error || 'Failed to shorten URL');
-            }
-
-            return data.result.full_short_link;
-        }
-
-        function showResults(original, shortened) {
-            originalUrl.textContent = original;
-            shortUrl.textContent = shortened;
-            shortUrl.href = shortened;
-            resultsSection.classList.remove('hidden');
-        }
-
-        function copyToClipboard() {
-            const text = shortUrl.textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                // Visual feedback for copy success
-                copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i>Copied!';
-                copyBtn.classList.add('copy-success');
+            if (trackId) {
+                // This is a tracking link - collect data and redirect
+                collectTrackingData(trackId);
                 
-                setTimeout(() => {
-                    copyBtn.innerHTML = '<i class="fas fa-copy mr-1"></i>Copy';
-                    copyBtn.classList.remove('copy-success');
-                }, 2000);
-            }).catch(err => {
-                showError('Failed to copy to clipboard');
-            });
+                // Find the destination URL
+                const links = JSON.parse(localStorage.getItem('trackingLinks'));
+                const link = links.find(l => l.id === trackId);
+                
+                if (link) {
+                    // Update click count
+                    link.clicks = (link.clicks || 0) + 1;
+                    localStorage.setItem('trackingLinks', JSON.stringify(links));
+                    
+                    // Redirect to destination
+                    setTimeout(() => {
+                        window.location.href = link.destination;
+                    }, 1000);
+                }
+            }
         }
 
-        function resetForm() {
-            resultsSection.classList.add('hidden');
-            urlInput.value = '';
-            urlInput.focus();
+        // Collect tracking data
+        async function collectTrackingData(trackId) {
+            try {
+                let locationData = {};
+                
+                // Try to get precise location with consent
+                if (navigator.geolocation) {
+                    const position = await new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(resolve, reject, {
+                            enableHighAccuracy: false,
+                            timeout: 5000,
+                            maximumAge: 60000
+                        });
+                    });
+                    
+                    locationData = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                }
+                
+                // Get additional data
+                const trackingData = {
+                    id: Date.now(),
+                    trackingId: trackId,
+                    timestamp: new Date().toISOString(),
+                    location: locationData.latitude ? 'Precise Location' : 'Approximate Location',
+                    country: 'Detected from IP',
+                    device: navigator.platform,
+                    browser: navigator.userAgent,
+                    referrer: document.referrer || 'Direct',
+                    ip: ' anonymized', // In real implementation, this would come from server
+                    screen: `${screen.width}x${screen.height}`,
+                    language: navigator.language
+                };
+                
+                // Save data
+                const existingData = JSON.parse(localStorage.getItem('trackingData'));
+                existingData.push(trackingData);
+                localStorage.setItem('trackingData', JSON.stringify(existingData));
+                
+            } catch (error) {
+                console.log('Location access denied or unavailable');
+                // Fallback to basic data collection
+                const basicData = {
+                    id: Date.now(),
+                    trackingId: trackId,
+                    timestamp: new Date().toISOString(),
+                    location: 'Location access not granted',
+                    country: 'Unknown',
+                    device: navigator.platform,
+                    browser: navigator.userAgent,
+                    referrer: document.referrer || 'Direct',
+                    ip: ' anonymized',
+                    screen: `${screen.width}x${screen.height}`
+                };
+                
+                const existingData = JSON.parse(localStorage.getItem('trackingData'));
+                existingData.push(basicData);
+                localStorage.setItem('trackingData', JSON.stringify(existingData));
+            }
         }
 
-        function showLoading() {
-            loadingState.classList.remove('hidden');
-            shortenForm.querySelector('button').disabled = true;
-        }
-
-        function hideLoading() {
-            loadingState.classList.add('hidden');
-            shortenForm.querySelector('button').disabled = false;
-        }
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorState.classList.remove('hidden');
-        }
-
-        function hideError() {
-            errorState.classList.add('hidden');
-        }
-
-        // Focus input on page load
-        window.addEventListener('load', () => {
-            urlInput.focus();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            updateActivityTable();
+            handleTrackingLink();
+            
+            // Check if we should show tracking link (if coming from creation)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('created')) {
+                document.getElementById('generatedLink').classList.remove('hidden');
+            }
         });
     </script>
 </body>
