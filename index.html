@@ -264,7 +264,7 @@
                 </div>
             </div>
 
-            <div class="card">
+                <div class="card">
                 <h2>📊 Quick Stats</h2>
                 <div class="stats-container">
                     <div class="stat-card">
@@ -281,7 +281,15 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-number" id="mobileClicks">0</div>
-                        <div class="stat-label">Mobile Clicks</div>
+                        <div class="stat-label">📱 Mobile</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="desktopClicks">0</div>
+                        <div class="stat-label">💻 Desktop</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="uniqueIPs">0</div>
+                        <div class="stat-label">🌐 Unique IPs</div>
                     </div>
                 </div>
             </div>
@@ -308,71 +316,28 @@
             return Math.random().toString(36).substr(2, 8);
         }
 
-        // Detect device type from user agent
+        // Get device type from user agent
         function getDeviceType(userAgent) {
             const ua = userAgent.toLowerCase();
             
             if (/tablet|ipad|playbook|silk/.test(ua)) {
                 return '📱 Tablet';
             }
-            if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/.test(ua)) {
+            if (/mobile|iphone|ipod|android|blackberry|opera mini|iemobile|wpdesktop/.test(ua)) {
                 return '📱 Mobile';
-            }
-            if (/bot|crawler|spider|scraper/.test(ua)) {
-                return '🤖 Bot';
             }
             return '💻 Desktop';
         }
 
-        // Get browser info
+        // Get browser info from user agent
         function getBrowserInfo(userAgent) {
-            const ua = userAgent.toLowerCase();
+            const ua = userAgent;
+            let browser = 'Unknown';
             
-            if (ua.includes('chrome') && !ua.includes('edge')) return '🟢 Chrome';
-            if (ua.includes('firefox')) return '🦊 Firefox';
-            if (ua.includes('safari') && !ua.includes('chrome')) return '🧭 Safari';
-            if (ua.includes('edge')) return '🌐 Edge';
-            if (ua.includes('opera')) return '🔴 Opera';
-            if (ua.includes('internet explorer') || ua.includes('trident')) return '🌐 IE';
-            
-            return '❓ Unknown';
-        }
-
-        // Get OS info
-        function getOSInfo(userAgent) {
-            const ua = userAgent.toLowerCase();
-            
-            if (ua.includes('windows')) return '🪟 Windows';
-            if (ua.includes('mac')) return '🍎 macOS';
-            if (ua.includes('linux')) return '🐧 Linux';
-            if (ua.includes('android')) return '🤖 Android';
-            if (ua.includes('ios') || ua.includes('iphone') || ua.includes('ipad')) return '📱 iOS';
-            
-            return '❓ Unknown';
-        }
-
-        // Get approximate location from IP
-        async function getLocationInfo() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                return {
-                    city: data.city || 'Unknown',
-                    region: data.region || 'Unknown',
-                    country: data.country_name || 'Unknown',
-                    ip: data.ip || 'Unknown',
-                    isp: data.org || 'Unknown'
-                };
-            } catch (error) {
-                return {
-                    city: 'Unknown',
-                    region: 'Unknown', 
-                    country: 'Unknown',
-                    ip: 'Unknown',
-                    isp: 'Unknown'
-                };
-            }
-        }
+            if (ua.includes('Firefox')) browser = '🦊 Firefox';
+            else if (ua.includes('Chrome') && !ua.includes('Edge')) browser = '🌐 Chrome';
+            else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = '🧭 Safari';
+            else if (ua.includes('Edge')) browser =
 
         // Create tracking link
         document.getElementById('linkForm').addEventListener('submit', async function(e) {
@@ -423,15 +388,15 @@
         // Record click data
         async function recordClick(linkId) {
             const locationInfo = await getLocationInfo();
-            const userAgent = navigator.userAgent;
+            const deviceType = getDeviceType(navigator.userAgent);
+            const browserInfo = getBrowserInfo(navigator.userAgent);
             
             const clickData = {
                 linkId,
                 timestamp: new Date().toISOString(),
-                userAgent: userAgent,
-                deviceType: getDeviceType(userAgent),
-                browser: getBrowserInfo(userAgent),
-                os: getOSInfo(userAgent),
+                userAgent: navigator.userAgent,
+                deviceType: deviceType,
+                browser: browserInfo,
                 referrer: document.referrer || 'Direct',
                 location: locationInfo
             };
@@ -493,14 +458,25 @@
             const todayClicks = trackingData.clicks.filter(click => 
                 new Date(click.timestamp).toDateString() === today
             ).length;
+            
+            // Device type breakdown
             const mobileClicks = trackingData.clicks.filter(click => 
                 click.deviceType && click.deviceType.includes('Mobile')
             ).length;
+            
+            const desktopClicks = trackingData.clicks.filter(click => 
+                !click.deviceType || click.deviceType.includes('Desktop')
+            ).length;
+            
+            // Unique IPs
+            const uniqueIPs = new Set(trackingData.clicks.map(click => click.location?.ip).filter(Boolean)).size;
             
             document.getElementById('totalClicks').textContent = totalClicks;
             document.getElementById('totalLinks').textContent = totalLinks;
             document.getElementById('todayClicks').textContent = todayClicks;
             document.getElementById('mobileClicks').textContent = mobileClicks;
+            document.getElementById('desktopClicks').textContent = desktopClicks;
+            document.getElementById('uniqueIPs').textContent = uniqueIPs;
         }
 
         // Update click log
@@ -522,10 +498,10 @@
                         <div class="click-time">${time}</div>
                         <div class="click-details">
                             <strong>${link ? link.linkName : 'Unknown Link'}</strong><br>
-                            <span class="location-info">📍 ${click.location.city}, ${click.location.country} (IP: ${click.location.ip})</span><br>
-                            ${click.deviceType} • ${click.browser} • ${click.os}<br>
-                            🌐 ${click.referrer}
-                            ${click.location.isp !== 'Unknown' ? `<br>🏢 ${click.location.isp}` : ''}
+                            <span class="location-info">📍 ${click.location.city}, ${click.location.country}</span><br>
+                            <span class="location-info">🌐 IP: ${click.location.ip}</span><br>
+                            ${click.deviceType || '💻 Desktop'} • ${click.browser || 'Unknown Browser'}<br>
+                            📊 Referrer: ${click.referrer}
                         </div>
                     </div>
                 `;
